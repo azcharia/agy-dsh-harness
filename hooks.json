@@ -1,0 +1,18 @@
+{
+  "agy-dsh-harness-lifecycle": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node \"D:/WORK/agy dsh harness/scripts/lifecycle-logger.mjs\" SessionStart",
+        "timeout": 10
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node \"D:/WORK/agy dsh harness/scripts/lifecycle-logger.mjs\" Stop",
+        "timeout": 10
+      }
+    ]
+  }
+}

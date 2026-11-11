@@ -1,0 +1,925 @@
+/* ==========================================================================
+   AGY-DSH Harness: Zero-Bloat Matte Theme (v1.1)
+   Designed for Antigravity 2.0 (Design System: Onyx)
+   Zero backdrop blur, zero heavy shadows, high readability, sub-millisecond paint.
+   ========================================================================== */
+
+/* 1. Core Surfaces & Onyx Token Overrides across all root contexts */
+html,
+:root,
+body,
+body.theme-dark,
+body[data-agy-theme="dsh-matte"],
+body.theme-dark[data-agy-theme="dsh-matte"],
+body.theme-dark[data-agy-theme="dsh-matte"][data-newux-theme="onyx"] {
+  color-scheme: dark !important;
+
+  /* Surfaces: neutral deep slate increments */
+  --background: #111113 !important;
+  --color-background: #111113 !important;
+  --content: #151517 !important;
+  --shell: #0e0e10 !important;
+  --sidebar: #0e0e10 !important;
+  --sidebar-secondary: #161619 !important;
+  --sidebar-muted: #131315 !important;
+
+  --card: #1c1c1f !important;
+  --card-border: rgba(255, 255, 255, 0.08) !important;
+  --border: rgba(255, 255, 255, 0.08) !important;
+
+  --glass: #1c1c1f !important;
+  --glass-border: rgba(255, 255, 255, 0.08) !important;
+  --glass-highlight: rgba(255, 255, 255, 0.04) !important;
+  --glass-shadow: none !important;
+  --scrim: rgba(0, 0, 0, 0.65) !important;
+
+  --secondary: #222226 !important;
+  --secondary-foreground: #dcdcde !important;
+  --muted: #1a1a1d !important;
+  --muted-foreground: #86868c !important;
+  --placeholder: #5c5c62 !important;
+
+  --foreground: #dcdcde !important;
+
+  /* Accent: Soft Pastel Peach (Default) & Live Creator Variable */
+  --dsh-accent: #fab387;
+  --dsh-doodle-opacity: 0.12;
+
+  --primary: var(--dsh-accent, #fab387) !important;
+  --primary-foreground: #111113 !important;
+  --cta: var(--dsh-accent, #fab387) !important;
+  --cta-foreground: #111113 !important;
+
+  /* Onyx Design System Tokens */
+  --onyx-frame: #18181b !important;
+  --onyx-well: #111113 !important;
+  --onyx-raised: #1c1c1f !important;
+  --onyx-selected: #26262b !important;
+  --onyx-key: #26262b !important;
+  --home-glow: transparent !important;
+  --nux-focus-ring: rgba(250, 179, 135, 0.35) !important;
+  --nux-chip-shadow: none !important;
+
+  /* Semantic status colors - Soft Pastel Dark (Night Friendly) */
+  --error: #f38ba8 !important; /* Soft Pastel Rose */
+  --destructive: #f38ba8 !important;
+  --diff-delete: #f38ba8 !important;
+  --diff-delete-bg: rgba(243, 139, 168, 0.12) !important;
+  --warning: #f9e2af !important; /* Soft Pastel Peach */
+  --success: #a6e3a1 !important; /* Soft Pastel Mint */
+  --diff-add: #a6e3a1 !important;
+  --diff-add-bg: rgba(166, 227, 161, 0.12) !important;
+  --link: #89b4fa !important; /* Soft Pastel Sky */
+  --code-foreground: #b4befe !important; /* Soft Pastel Lavender */
+
+  --focus-ring-color: rgba(250, 179, 135, 0.35) !important;
+  --focus-ring-offset-color: #111113 !important;
+
+  /* Editor and Syntax */
+  --editor-line-number-foreground: rgba(255, 255, 255, 0.28) !important;
+  --editor-selection-background: rgba(180, 190, 254, 0.22) !important;
+  --editor-code-block-background: #111113 !important;
+
+  /* VS Code variables that carry One Dark blue cast */
+  --vscode-foreground: #dcdcde !important;
+  --vscode-focusBorder: rgba(255, 255, 255, 0.18) !important;
+  --vscode-textLink-foreground: #89b4fa !important;
+  --vscode-textCodeBlock-background: #111113 !important;
+  --vscode-sideBar-background: #0e0e10 !important;
+  --vscode-editor-background: #111113 !important;
+  --vscode-editor-foreground: #dcdcde !important;
+  --vscode-editor-lineHighlightBackground: rgba(255, 255, 255, 0.045) !important;
+  --vscode-editor-selectionBackground: rgba(180, 190, 254, 0.16) !important;
+  --vscode-editorCursor-foreground: #f2f2f3 !important;
+  --vscode-editorLineNumber-foreground: #5c5c60 !important;
+  --vscode-editorLineNumber-activeForeground: #a3a3a8 !important;
+  --vscode-editorWidget-background: #1c1c1f !important;
+  --vscode-editorWidget-border: rgba(255, 255, 255, 0.11) !important;
+  --vscode-editorHoverWidget-background: #1c1c1f !important;
+  --vscode-editorHoverWidget-border: rgba(255, 255, 255, 0.11) !important;
+  --vscode-input-background: #1c1c1f !important;
+  --vscode-input-border: rgba(255, 255, 255, 0.11) !important;
+  --vscode-dropdown-background: #1c1c1f !important;
+  --vscode-dropdown-border: rgba(255, 255, 255, 0.11) !important;
+  --vscode-button-background: var(--dsh-accent, #fab387) !important;
+  --vscode-button-foreground: #111113 !important;
+  --vscode-button-hoverBackground: #f5c2a5 !important;
+  --vscode-badge-background: #26262a !important;
+  --vscode-badge-foreground: #dcdcde !important;
+  --vscode-list-hoverBackground: rgba(255, 255, 255, 0.045) !important;
+  --vscode-list-focusBackground: rgba(255, 255, 255, 0.08) !important;
+  --vscode-list-activeSelectionBackground: rgba(255, 255, 255, 0.08) !important;
+  --vscode-list-inactiveSelectionBackground: rgba(255, 255, 255, 0.045) !important;
+}
+
+/* 2. Direct Component Surface Overrides (No Dark Blue Leaks) */
+html,
+body {
+  background-color: #111113 !important;
+  color: #dcdcde !important;
+}
+
+/* 2.1 Sidebar & Sash */
+.bg-sidebar,
+aside,
+[data-testid="sidebar-content"],
+[data-testid="chat-sidebar"] {
+  background-color: #0e0e10 !important;
+}
+
+.bg-border.flex-shrink-0.z-30.h-full {
+  background-color: #0e0e10 !important;
+}
+
+/* 2.2 Top Header & Window Titlebar */
+header,
+[data-testid="titlebar"],
+[data-testid="title-menu-bar-item"] {
+  background-color: #0e0e10 !important;
+}
+
+/* 2.3 Composer & Chat Input Container */
+.surface-composer,
+[id="antigravity.agentSidePanelInputBox"],
+[data-testid="chat-input-container"] {
+  background-color: #18181b !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.7) !important;
+}
+
+.surface-composer:focus-within,
+[id="antigravity.agentSidePanelInputBox"]:focus-within {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.surface-composer > .surface-composer-card {
+  background-color: #1c1c1f !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* 2.4 User Bubble & Dialog Surfaces */
+.agy-user-bubble-frame {
+  padding: 1px;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px;
+}
+
+.agy-user-bubble {
+  background-color: #1c1c1f !important;
+  color: #dcdcde !important;
+  box-shadow: none !important;
+  border-radius: 11px;
+}
+
+.agy-overlay[role="menu"],
+[role="menu"] {
+  background-color: #1c1c1f !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: none !important;
+}
+
+/* 2.5 Inactive webview occlusion guard */
+div[style*="opacity: 0.005"] webview,
+div[style*="display: none"] webview,
+webview[style*="opacity: 0.005"] {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 2.6 Home Screen Seamless Surface, Glow Kill & Multi-Color Pastel Cosmic Doodle */
+body[data-agy-home-glow] .agy-sheet:has(.agy-home),
+.agy-sheet:has(.agy-home),
+.agy-sheet {
+  background-image: none !important;
+  background-color: #111113 !important;
+  border: none !important;
+  border-top: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Force all intermediate wrapper elements in Home to be transparent and borderless */
+.agy-sheet:has(.agy-home) > div,
+.agy-sheet:has(.agy-home) .agy-home,
+.agy-sheet:has(.agy-home) .agy-home > div,
+.agy-home,
+.agy-home > div {
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Explicitly neutralize any pseudo-elements on sheet to prevent double layer / ghosting */
+body .agy-sheet:has(.agy-home)::before,
+body[data-agy-home-glow] .agy-sheet:has(.agy-home)::before,
+.agy-sheet:has(.agy-home)::before,
+.agy-sheet::before,
+body .agy-sheet:has(.agy-home)::after,
+body[data-agy-home-glow] .agy-sheet:has(.agy-home)::after,
+.agy-sheet:has(.agy-home)::after,
+.agy-sheet::after {
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  display: none !important;
+}
+
+/* Single-Layer Crisp Multi-Color Soft Pastel Cosmic Doodle Canvas on Home */
+.agy-home::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380' viewBox='0 0 380 380' fill='none' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3C!-- 1. Ringed Planet (Lavender) --%3E%3Cg transform='translate(55, 55) rotate(-18) scale(0.95)' stroke='%23b4befe'%3E%3Ccircle cx='0' cy='0' r='14'/%3E%3Cellipse cx='0' cy='0' rx='25' ry='6' transform='rotate(-20)'/%3E%3C/g%3E%3C!-- 2. Rocket (Peach) --%3E%3Cg transform='translate(170, 48) rotate(38) scale(0.85)' stroke='%23fab387'%3E%3Cpath d='M0 -16 C5 -10 6 6 4 14 L-4 14 C-6 6 -5 -10 0 -16 Z'/%3E%3Cpath d='M-4 8 L-10 16 L-4 14 M4 8 L10 16 L4 14'/%3E%3Ccircle cx='0' cy='-2' r='3'/%3E%3Cpath d='M-2 16 L0 22 L2 16'/%3E%3C/g%3E%3C!-- 3. Satellite (Sky) --%3E%3Cg transform='translate(295, 50) rotate(-22) scale(0.8)' stroke='%2389dceb'%3E%3Crect x='-8' y='-6' width='16' height='12' rx='2'/%3E%3Cline x1='-20' y1='0' x2='-8' y2='0'/%3E%3Cline x1='8' y1='0' x2='20' y2='0'/%3E%3Crect x='-26' y='-5' width='6' height='10' rx='1'/%3E%3Crect x='20' y='-5' width='6' height='10' rx='1'/%3E%3Cline x1='0' y1='-6' x2='0' y2='-14'/%3E%3Ccircle cx='0' cy='-14' r='2' fill='%2389dceb'/%3E%3C/g%3E%3C!-- 4. Lambda Symbol (Mauve) --%3E%3Cg transform='translate(115, 75) rotate(-15) scale(0.85)' stroke='%23cba6f7'%3E%3Cpath d='M-8 12 L4 -12 M-1 1 L-10 -7'/%3E%3C/g%3E%3C!-- 5. Sigma Symbol (Mauve) --%3E%3Cg transform='translate(235, 75) rotate(10) scale(0.8)' stroke='%23cba6f7'%3E%3Cpath d='M8 -10 L-6 -10 L2 0 L-6 10 L8 10'/%3E%3C/g%3E%3C!-- 6. Crescent Moon (Soft Yellow) --%3E%3Cg transform='translate(345, 80) rotate(-20) scale(0.8)' stroke='%23f9e2af'%3E%3Cpath d='M0 -12 C7 -12 12 -7 12 0 C12 7 7 12 0 12 C4 8 5 -2 0 -12 Z'/%3E%3C/g%3E%3C!-- 7. Comet (Lavender) --%3E%3Cg transform='translate(40, 115) rotate(-35) scale(0.8)' stroke='%23b4befe'%3E%3Ccircle cx='0' cy='0' r='5' fill='%23b4befe'/%3E%3Cline x1='0' y1='0' x2='24' y2='-4'/%3E%3Cline x1='0' y1='2' x2='20' y2='4'/%3E%3Cline x1='0' y1='-2' x2='16' y2='-8'/%3E%3C/g%3E%3C!-- 8. Atom Orbit (Sky) --%3E%3Cg transform='translate(60, 185) rotate(25) scale(0.9)' stroke='%2389dceb'%3E%3Ccircle cx='0' cy='0' r='3.5' fill='%2389dceb'/%3E%3Cellipse cx='0' cy='0' rx='18' ry='6' transform='rotate(0)'/%3E%3Cellipse cx='0' cy='0' rx='18' ry='6' transform='rotate(60)'/%3E%3Cellipse cx='0' cy='0' rx='18' ry='6' transform='rotate(120)'/%3E%3C/g%3E%3C!-- 9. Sparkle 4-point Star Large (Peach) --%3E%3Cg transform='translate(130, 25) scale(1.1)' stroke='%23fab387'%3E%3Cpath d='M0 -12 C0 -3 3 0 12 0 C3 0 0 3 0 12 C0 3 -3 0 -12 0 C-3 0 0 -3 0 -12 Z'/%3E%3C/g%3E%3C!-- 10. AI Chip (Mint) --%3E%3Cg transform='translate(330, 150) rotate(-10) scale(0.85)' stroke='%23a6e3a1'%3E%3Crect x='-11' y='-11' width='22' height='22' rx='3'/%3E%3Crect x='-6' y='-6' width='12' height='12' rx='1'/%3E%3Cline x1='-16' y1='-5' x2='-11' y2='-5'/%3E%3Cline x1='-16' y1='5' x2='-11' y2='5'/%3E%3Cline x1='11' y1='-5' x2='16' y2='-5'/%3E%3Cline x1='11' y1='5' x2='16' y2='5'/%3E%3Cline x1='-5' y1='-16' x2='-5' y2='-11'/%3E%3Cline x1='5' y1='-16' x2='5' y2='-11'/%3E%3Cline x1='-5' y1='11' x2='-5' y2='16'/%3E%3Cline x1='5' y1='11' x2='5' y2='16'/%3E%3C/g%3E%3C!-- 11. Code Brackets (Mint) --%3E%3Cg transform='translate(50, 260) rotate(-12) scale(0.9)' stroke='%23a6e3a1'%3E%3Cpath d='M-10 -7 L-16 0 L-10 7'/%3E%3Cpath d='M10 -7 L16 0 L10 7'/%3E%3Cline x1='3' y1='-8' x2='-3' y2='8'/%3E%3C/g%3E%3C!-- 12. Curly Braces (Mint) --%3E%3Cg transform='translate(325, 235) rotate(15) scale(0.85)' stroke='%23a6e3a1'%3E%3Cpath d='M-6 -10 C-3 -10 -2 -8 -2 -4 C-2 -1 0 0 3 0 C0 0 -2 1 -2 4 C-2 8 -3 10 -6 10'/%3E%3Cpath d='M6 -10 C3 -10 2 -8 2 -4 C2 -1 0 0 -3 0 C0 0 2 1 2 4 C2 8 3 10 6 10'/%3E%3C/g%3E%3C!-- 13. Terminal Prompt (Mint) --%3E%3Cg transform='translate(175, 230) rotate(-6) scale(0.85)' stroke='%23a6e3a1'%3E%3Cpath d='M-10 -6 L-4 0 L-10 6'/%3E%3Cline x1='-1' y1='6' x2='8' y2='6'/%3E%3C/g%3E%3C!-- 14. 3D Wireframe Cube (Soft Yellow) --%3E%3Cg transform='translate(75, 330) rotate(-14) scale(0.9)' stroke='%23f9e2af'%3E%3Cpath d='M0 -14 L12 -7 L12 7 L0 14 L-12 7 L-12 -7 Z'/%3E%3Cline x1='0' y1='0' x2='0' y2='14'/%3E%3Cline x1='0' y1='0' x2='12' y2='-7'/%3E%3Cline x1='0' y1='0' x2='-12' y2='-7'/%3E%3C/g%3E%3C!-- 15. Gear (Soft Yellow) --%3E%3Cg transform='translate(305, 320) rotate(32) scale(0.9)' stroke='%23f9e2af'%3E%3Ccircle cx='0' cy='0' r='7'/%3E%3Ccircle cx='0' cy='0' r='3.5'/%3E%3Cpath d='M-2 -11 L2 -11 L1 -7 L-1 -7 Z'/%3E%3Cpath d='M-2 11 L2 11 L1 7 L-1 7 Z'/%3E%3Cpath d='M-11 -2 L-11 2 L-7 1 L-7 -1 Z'/%3E%3Cpath d='M11 -2 L11 2 L7 1 L7 -1 Z'/%3E%3C/g%3E%3C!-- 16. Radio / Signal Waves (Sky) --%3E%3Cg transform='translate(185, 325) rotate(-12) scale(0.9)' stroke='%2389dceb'%3E%3Ccircle cx='0' cy='6' r='2' fill='%2389dceb'/%3E%3Cpath d='M-7 2 C-4 -1 4 -1 7 2'/%3E%3Cpath d='M-12 -3 C-7 -7 7 -7 12 -3'/%3E%3C/g%3E%3C!-- 17. Neural Network (Pink) --%3E%3Cg transform='translate(250, 175) rotate(20) scale(0.8)' stroke='%23f5c2e7'%3E%3Ccircle cx='-12' cy='-8' r='3' fill='%23f5c2e7'/%3E%3Ccircle cx='-12' cy='8' r='3' fill='%23f5c2e7'/%3E%3Ccircle cx='12' cy='0' r='3' fill='%23f5c2e7'/%3E%3Cline x1='-12' y1='-8' x2='12' y2='0'/%3E%3Cline x1='-12' y1='8' x2='12' y2='0'/%3E%3C/g%3E%3C!-- 18. Sparkle 4-point Star Medium (Peach) --%3E%3Cg transform='translate(355, 30) scale(0.75)' stroke='%23fab387'%3E%3Cpath d='M0 -9 C0 -2 2 0 9 0 C2 0 0 2 0 9 C0 2 -2 0 -9 0 C-2 0 0 -2 0 -9 Z'/%3E%3C/g%3E%3C!-- 19. Sparkle 4-point Star Small (Peach) --%3E%3Cg transform='translate(125, 140) scale(0.65)' stroke='%23fab387'%3E%3Cpath d='M0 -8 C0 -2 2 0 8 0 C2 0 0 2 0 8 C0 2 -2 0 -8 0 C-2 0 0 -2 0 -8 Z'/%3E%3C/g%3E%3C!-- 20. Diamond Constellation (Pink) --%3E%3Cg transform='translate(230, 260) rotate(28) scale(0.75)' stroke='%23f5c2e7'%3E%3Ccircle cx='-10' cy='0' r='2' fill='%23f5c2e7'/%3E%3Ccircle cx='0' cy='-12' r='2' fill='%23f5c2e7'/%3E%3Ccircle cx='10' cy='0' r='2' fill='%23f5c2e7'/%3E%3Ccircle cx='0' cy='12' r='2' fill='%23f5c2e7'/%3E%3Cline x1='-10' y1='0' x2='0' y2='-12'/%3E%3Cline x1='0' y1='-12' x2='10' y2='0'/%3E%3Cline x1='10' y1='0' x2='0' y2='12'/%3E%3Cline x1='0' y1='12' x2='-10' y2='0'/%3E%3C/g%3E%3C!-- 21. Hexagon Node (Mauve) --%3E%3Cg transform='translate(120, 275) rotate(-18) scale(0.75)' stroke='%23cba6f7'%3E%3Cpolygon points='0,-10 9,-5 9,5 0,10 -9,5 -9,-5'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23cba6f7'/%3E%3C/g%3E%3C!-- 22. Infinity Symbol (Mauve) --%3E%3Cg transform='translate(340, 335) rotate(12) scale(0.75)' stroke='%23cba6f7'%3E%3Cpath d='M-8 0 C-8 -4 -4 -4 0 0 C4 4 8 4 8 0 C8 -4 4 -4 0 0 C-4 4 -8 4 -8 0 Z'/%3E%3C/g%3E%3C!-- 23. Database Cylinders (Sky) --%3E%3Cg transform='translate(35, 360) rotate(5) scale(0.7)' stroke='%2389dceb'%3E%3Cellipse cx='0' cy='-6' rx='9' ry='3'/%3E%3Cpath d='M-9 -6 L-9 6 C-9 8 9 8 9 6 L9 -6'/%3E%3Cpath d='M-9 0 C-9 2 9 2 9 0'/%3E%3C/g%3E%3C!-- 24. Binary Bits 0 1 (Mint) --%3E%3Cg transform='translate(225, 28) rotate(-4) scale(0.7)' stroke='%23a6e3a1'%3E%3Cellipse cx='-8' cy='0' rx='3' ry='5'/%3E%3Cline x1='4' y1='-5' x2='4' y2='5'/%3E%3Cellipse cx='14' cy='0' rx='3' ry='5'/%3E%3C/g%3E%3C!-- 25. Compass / Asterisk (Lavender) --%3E%3Cg transform='translate(130, 200) rotate(35) scale(0.65)' stroke='%23b4befe'%3E%3Cline x1='0' y1='-9' x2='0' y2='9'/%3E%3Cline x1='-9' y1='0' x2='9' y2='0'/%3E%3Cline x1='-6' y1='-6' x2='6' y2='6'/%3E%3Cline x1='-6' y1='6' x2='6' y2='-6'/%3E%3C/g%3E%3C!-- 26. Star Dots Field (Multi-Pastel) --%3E%3Ccircle cx='20' cy='40' r='1.2' fill='%23b4befe'/%3E%3Ccircle cx='95' cy='120' r='1.4' fill='%23fab387'/%3E%3Ccircle cx='185' cy='105' r='1' fill='%23f9e2af'/%3E%3Ccircle cx='270' cy='115' r='1.2' fill='%23a6e3a1'/%3E%3Ccircle cx='360' cy='195' r='1.5' fill='%2389dceb'/%3E%3Ccircle cx='210' cy='180' r='1' fill='%23cba6f7'/%3E%3Ccircle cx='25' cy='220' r='1.4' fill='%23f5c2e7'/%3E%3Ccircle cx='160' cy='270' r='1.2' fill='%23f9e2af'/%3E%3Ccircle cx='275' cy='225' r='1.3' fill='%23b4befe'/%3E%3Ccircle cx='365' cy='280' r='1' fill='%23fab387'/%3E%3Ccircle cx='20' cy='310' r='1.3' fill='%23a6e3a1'/%3E%3Ccircle cx='135' cy='350' r='1.2' fill='%2389dceb'/%3E%3Ccircle cx='245' cy='340' r='1.5' fill='%23f5c2e7'/%3E%3Ccircle cx='360' cy='370' r='1.2' fill='%23f9e2af'/%3E%3C/svg%3E") !important;
+  background-size: 420px 420px !important;
+  background-repeat: repeat !important;
+  opacity: var(--dsh-doodle-opacity, 0.12) !important;
+  mask-image: radial-gradient(ellipse 240px 95px at 50% 42%, transparent 0%, transparent 60%, black 100%) !important;
+  -webkit-mask-image: radial-gradient(ellipse 240px 95px at 50% 42%, transparent 0%, transparent 60%, black 100%) !important;
+}
+
+.agy-home {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.agy-home > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+/* 3. Zero-Bloat Optimizations (Eliminate Layout Thrashing & GPU Load) */
+body * {
+  text-shadow: none !important;
+}
+
+/* 4. Code Block Header Tools (Line Numbers & Wrap Lines) */
+.agy-code-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+  border-radius: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground, #86868c);
+  cursor: pointer;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.agy-code-tool:hover {
+  color: var(--foreground, #dcdcde);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.agy-code-tool[aria-pressed="true"] {
+  color: var(--primary, #e5a84b);
+  background: rgba(229, 168, 75, 0.12);
+}
+
+:root[data-agy-code-lines] .agy-code {
+  counter-reset: agy-line;
+}
+
+:root[data-agy-code-lines] .agy-code .code-line {
+  counter-increment: agy-line;
+}
+
+:root[data-agy-code-lines] .agy-code .code-line::before {
+  content: counter(agy-line);
+  display: inline-block;
+  min-width: 2.2ch;
+  margin-right: 14px;
+  text-align: right;
+  color: var(--editor-line-number-foreground, rgba(255, 255, 255, 0.25));
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+:root[data-agy-code-nowrap] .agy-code {
+  white-space: pre !important;
+  word-break: normal !important;
+}
+
+:root[data-agy-code-nowrap] .agy-code > :last-child {
+  overflow-x: auto !important;
+}
+
+:root[data-agy-code-nowrap] .agy-code .line-content {
+  white-space: pre !important;
+  word-break: normal !important;
+}
+
+/* 5. Dedicated Composer Status Strip (#agy-dsh-pill-bar), Pills & Isolated Popover */
+#agy-dsh-pill-bar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: 100% !important;
+  padding: 4px 10px 2px 10px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  z-index: 50 !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+.agy-pill-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 22px !important;
+  padding: 0 8px !important;
+  border-radius: 9999px !important;
+  font-size: 11px !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-variant-numeric: tabular-nums !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--muted-foreground, #86868c) !important;
+  user-select: none !important;
+  cursor: pointer !important;
+  transition: all 150ms ease !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 50 !important;
+}
+
+.agy-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--foreground, #dcdcde) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+#agy-mini-context-pill[data-level="warn"] {
+  border-color: rgba(250, 179, 135, 0.45) !important;
+  color: #fab387 !important;
+  background: rgba(250, 179, 135, 0.12) !important;
+}
+
+#agy-mini-context-pill[data-level="critical"] {
+  border-color: rgba(243, 139, 168, 0.5) !important;
+  color: #f38ba8 !important;
+  background: rgba(243, 139, 168, 0.15) !important;
+  font-weight: 600 !important;
+}
+
+#agy-mini-context-pill .pill-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #a6e3a1 !important; /* Soft Pastel Mint normal dot */
+  box-shadow: 0 0 6px rgba(166, 227, 161, 0.4) !important;
+  transition: background-color 180ms ease, box-shadow 180ms ease !important;
+  flex-shrink: 0 !important;
+}
+
+#agy-mini-context-pill[data-level="warn"] .pill-dot {
+  background: #fab387 !important; /* Soft Pastel Peach */
+  box-shadow: 0 0 6px rgba(250, 179, 135, 0.5) !important;
+}
+
+#agy-mini-context-pill[data-level="critical"] .pill-dot {
+  background: #f38ba8 !important; /* Soft Pastel Rose */
+  box-shadow: 0 0 6px rgba(243, 139, 168, 0.5) !important;
+}
+
+#agy-events-pill.has-events {
+  border-color: rgba(250, 179, 135, 0.35) !important;
+  color: #fab387 !important;
+  background: rgba(250, 179, 135, 0.10) !important;
+}
+
+#agy-creator-pill:hover,
+#agy-creator-pill.active {
+  border-color: rgba(250, 179, 135, 0.45) !important;
+  color: #fab387 !important;
+  background: rgba(250, 179, 135, 0.12) !important;
+}
+
+/* 5.1 Isolated Fixed Popover (#agy-ctx-popover) */
+#agy-ctx-popover {
+  position: fixed !important;
+  z-index: 2147483646 !important;
+  display: none;
+  pointer-events: none !important;
+  width: 290px !important;
+  padding: 12px 14px !important;
+  border-radius: 10px !important;
+  background: #18181b !important;
+  border: 1px solid #2e2e36 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75) !important;
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+  color: #dcdcde !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+#agy-ctx-popover .pop-title {
+  font-weight: 600;
+  color: #f2f2f3;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#agy-ctx-popover .pop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+  color: #86868c;
+}
+
+#agy-ctx-popover .pop-val {
+  font-family: var(--font-mono, monospace);
+  color: #dcdcde;
+}
+
+#agy-ctx-popover .pop-val.highlight {
+  color: #a6e3a1; /* Soft Pastel Mint */
+  font-weight: 600;
+}
+
+#agy-ctx-popover .pop-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 5px 0;
+}
+
+/* 6. Turn Token Counter (In Chat Toolbar) */
+.agy-turn-tokens {
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground, #86868c);
+  padding: 0 4px;
+  white-space: nowrap;
+  max-width: 100%;
+  transition: all 150ms ease;
+}
+
+.agy-turn-tokens[data-compact="true"],
+[data-compact="true"] .agy-turn-tokens {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  font-size: 10px !important;
+  padding: 0 2px !important;
+}
+
+.agy-turn-tokens .hit-rate {
+  color: var(--primary, #e5a84b);
+  opacity: 0.85;
+}
+
+/* 7. Event-Sourced Session Log Pill & In-App Slide-Over Drawer */
+/* Slide-Over Drawer Backdrop */
+#agy-events-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  z-index: 2147483645 !important;
+  display: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: auto !important;
+}
+
+#agy-events-backdrop.open {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* Slide-Over Events Drawer Container */
+#agy-events-drawer {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 420px !important;
+  max-width: 92vw !important;
+  background: #141417 !important;
+  border-left: 1px solid #2e2e36 !important;
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.75) !important;
+  z-index: 2147483646 !important;
+  display: none;
+  flex-direction: column !important;
+  transform: translateX(105%) !important;
+  transition: transform 200ms ease !important;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  color: #dcdcde;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+#agy-events-drawer.open {
+  display: flex !important;
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Drawer Header */
+.agy-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111113;
+}
+
+.agy-drawer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agy-drawer-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f2f2f3;
+  margin: 0;
+}
+
+.agy-drawer-badge {
+  font-size: 10px;
+  font-family: var(--font-mono, monospace);
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: rgba(229, 168, 75, 0.15);
+  color: #e5a84b;
+  border: 1px solid rgba(229, 168, 75, 0.3);
+}
+
+.agy-drawer-close {
+  background: transparent;
+  border: none;
+  color: #86868c;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 140ms ease;
+}
+
+.agy-drawer-close:hover {
+  color: #f2f2f3;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Drawer Controls: Search & Filter Tabs */
+.agy-drawer-controls {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: #18181b;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.agy-drawer-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #111113;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #dcdcde;
+  font-size: 11px;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.agy-drawer-search:focus {
+  border-color: rgba(229, 168, 75, 0.45);
+}
+
+.agy-drawer-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.agy-filter-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #86868c;
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.agy-filter-btn:hover {
+  color: #dcdcde;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.agy-filter-btn.active {
+  background: rgba(229, 168, 75, 0.15);
+  color: #e5a84b;
+  border-color: rgba(229, 168, 75, 0.35);
+  font-weight: 500;
+}
+
+/* Event List Scroll Area */
+.agy-drawer-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.agy-event-card {
+  background: #1c1c1f;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 9px 11px;
+  transition: border-color 150ms ease;
+  cursor: pointer;
+}
+
+.agy-event-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.agy-event-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.agy-event-type-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.agy-event-type-badge[data-type*="Tool"] {
+  background: rgba(250, 179, 135, 0.15);
+  color: #fab387;
+}
+
+.agy-event-type-badge[data-type="PostToolUse"] {
+  background: rgba(166, 227, 161, 0.15);
+  color: #a6e3a1;
+}
+
+.agy-event-type-badge[data-type*="Session"],
+.agy-event-type-badge[data-type="SessionStart"] {
+  background: rgba(137, 180, 250, 0.15);
+  color: #89b4fa;
+}
+
+.agy-event-type-badge[data-type*="Invocation"] {
+  background: rgba(180, 190, 254, 0.15);
+  color: #b4befe;
+}
+
+.agy-event-type-badge[data-type="Stop"],
+.agy-event-type-badge[data-type*="Error"] {
+  background: rgba(243, 139, 168, 0.15);
+  color: #f38ba8;
+}
+
+.agy-event-cache-warn-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  background: rgba(243, 139, 168, 0.18);
+  color: #f38ba8;
+  border: 1px solid rgba(243, 139, 168, 0.35);
+  text-transform: uppercase;
+}
+
+.agy-event-time {
+  font-size: 10px;
+  font-family: var(--font-mono, monospace);
+  color: #71717a;
+}
+
+.agy-event-summary {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #dcdcde;
+  word-break: break-word;
+}
+
+.agy-event-tool-tag {
+  font-family: var(--font-mono, monospace);
+  color: #fab387;
+  font-weight: 500;
+}
+
+.agy-event-details {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  color: #a1a1aa;
+  background: #111113;
+  padding: 6px 8px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 160px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   6. Soft Pastel Inline Code, Diffs & Chat Badges (Bagian A)
+   ───────────────────────────────────────────────────────────────────────────── */
+:not(pre) > code,
+code:not(pre code) {
+  color: #b4befe !important;
+  background-color: rgba(180, 190, 254, 0.10) !important;
+  border: 1px solid rgba(180, 190, 254, 0.18) !important;
+  border-radius: 4px !important;
+  padding: 1px 6px !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.88em !important;
+}
+
+/* Diff deletions / removals (Soft Pastel Rose) */
+[class*="diff-delete"],
+[class*="deletion"],
+.diff-remove,
+.diff-deleted {
+  color: #f38ba8 !important;
+  background-color: rgba(243, 139, 168, 0.12) !important;
+  border-color: rgba(243, 139, 168, 0.25) !important;
+}
+
+/* Diff additions / inserts (Soft Pastel Mint) */
+[class*="diff-add"],
+[class*="addition"],
+.diff-insert,
+.diff-added {
+  color: #a6e3a1 !important;
+  background-color: rgba(166, 227, 161, 0.12) !important;
+  border-color: rgba(166, 227, 161, 0.25) !important;
+}
+
+/* Badge and diff counters e.g., -12 and +12 */
+[class*="diff-stat-del"],
+[data-testid*="delete-count"],
+.text-destructive,
+.text-red-500,
+.text-rose-500 {
+  color: #f38ba8 !important;
+}
+
+[class*="diff-stat-add"],
+[data-testid*="add-count"],
+.text-success,
+.text-green-500,
+.text-emerald-500 {
+  color: #a6e3a1 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   7. Creator Mode UI & Live Theme Tuner (Bagian B - F4)
+   ───────────────────────────────────────────────────────────────────────────── */
+.agy-drawer-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.agy-tab-btn {
+  background: transparent;
+  border: none;
+  color: #86868c;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.agy-tab-btn:hover {
+  color: #dcdcde;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.agy-tab-btn.active {
+  color: var(--dsh-accent, #fab387);
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+}
+
+.agy-creator-panel {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.agy-creator-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #1c1c1f;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.agy-creator-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #dcdcde;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.agy-creator-label span.val {
+  color: var(--dsh-accent, #fab387);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+}
+
+.agy-creator-slider {
+  width: 100%;
+  accent-color: var(--dsh-accent, #fab387);
+  cursor: pointer;
+}
+
+.agy-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.agy-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111113;
+  color: #86868c;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.agy-preset-btn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #dcdcde;
+}
+
+.agy-preset-btn.active {
+  border-color: var(--dsh-accent, #fab387);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.agy-preset-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}

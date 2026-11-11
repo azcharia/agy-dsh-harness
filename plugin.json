@@ -1,0 +1,16 @@
+{
+  "name": "agy-dsh-harness",
+  "displayName": "AGY-DSH Harness",
+  "description": "Ultra-fast, zero-bloat custom theme engine, real-time Context/Token HUD overlay, and live creator harness for Google Antigravity 2.0.",
+  "version": "0.1.0",
+  "author": {
+    "name": "AGY-DSH Team"
+  },
+  "hooks": "hooks.json",
+  "suggestedPrompts": [
+    "Inject AGY-DSH Harness theme and HUD overlay into Antigravity",
+    "Show AGY-DSH Harness injection status and context stats",
+    "Inspect Antigravity system health via dsh-core MCP server",
+    "Remove AGY-DSH Harness from running Antigravity windows"
+  ]
+}
