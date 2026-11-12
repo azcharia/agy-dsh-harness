@@ -198,3 +198,45 @@ Sebelumnya `#agy-dsh-pill-bar` disisipkan ke dalam flex baris yang sama dengan t
    - Menghapus seluruh pelacakan heuristik berbasis DOM teks `"Compacting"` dan penurunan delta token karena menyebabkan false positive yang parah saat riwayat obrolan memuat kata "compacting" atau saat slice me-render ulang.
    - Tampilan Mini Context Pill dikembalikan ke format bersih dan presisi: `● Ctx: XX% (Xk/250k) · Cache: YY%`.
    - Popover menampilkan ringkasan bersih: Compaction Budget (`Xk/250k`), Model Raw Limit (`Xk/1M`), dan token turn/cache.
+
+---
+
+## SKENARIO J: Zero-Idle Compute, Strict Equality Guards, & Zombie Process Elimination (Fase 3.10, ADR-018)
+
+### Gejala:
+1. `Antigravity.exe` mengonsumsi daya komputasi tinggi (~11.8% CPU dan ~9.9% GPU) terus-menerus dalam kondisi idle (tidak sedang memproses pesan pengguna).
+2. Terdapat proses zombie `node.exe` yang terakumulasi di background akibat auto-spawn `mcpServers` pada `plugin.json` dan hook tanpa pengatur waktu terminasi (watchdog).
+
+### Solusi Self-Healing (ADR-018):
+1. **Strict Equality Guards pada Penulisan DOM:**
+   - Setiap fungsi injeksi DOM (`updateMiniPill`, `applyHUDDensity`, `mountPillBar`) wajib memeriksa apakah nilai baru sama persis dengan nilai lama (`if (el.textContent === nextText) return;`) sebelum melakukan mutasi.
+2. **Filter Mutasi Internal pada MutationObserver:**
+   - Callback observer pada `#root` dan `autoscroll-viewport` memfilter elemen milik harness:
+     `if (mutation.target.closest?.('[data-dsh-injected="true"]') || mutation.target.id?.startsWith('agy-')) continue;`
+   - Ini memutus siklus layout thrashing dan infinite repaint loop.
+3. **Throttled & Fingerprinted Tick:**
+   - Eksekusi `tick()` dibatasi dengan cooldown 500ms dan state fingerprinting. Interval fallback relaksasi dinaikkan dari 2000ms menjadi 5000ms.
+4. **Zombie Process Elimination:**
+   - Menghapus daemon `mcpServers` dari `plugin.json` dan memasang watchdog unreferenced timer (`setTimeout(() => process.exit(0), 2500).unref()`) pada setiap hook dan script CLI.
+
+---
+
+## SKENARIO K: Unified Post-Update Self-Healing, Hardened ASAR Backup, & Global Skill (Fase 3.11, ADR-019)
+
+### Gejala:
+1. Google Antigravity melakukan pembaruan otomatis (official update), menimpa `resources/app.asar` sehingga kembali ke stock styling.
+2. Keberadaan file `app.asar.backup` dari versi aplikasi lama menimbulkan risiko *downgrade mismatch* jika `uninstall-native` dijalankan pada biner versi baru.
+
+### Solusi Self-Healing (ADR-019):
+1. **Single-Door Self-Healing Command:**
+   - Perintah tunggal `node scripts/cdp-injector.mjs self-heal` mengotomatisasi seluruh alur pemulihan:
+     - Memeriksa koneksi CDP dan menyuntikkan live CSS/JS (`apply` dan `push-events`).
+     - Memverifikasi keberadaan elemen HUD di DOM.
+     - Memeriksa biner `app.asar`. Jika biner belum dipatch (`!isAsarPatched()`), secara otomatis memperbarui `app.asar.backup` dengan biner versi baru, lalu memasang native Main Process hook.
+2. **Hardened Backup Synchronization di `cmdInstallNative()`:**
+   - Sebelum melakukan patching, sistem memeriksa apakah `app.asar` yang sedang aktif mengandung marker patch `AGY-DSH`.
+   - Jika biner bersih (stock update dari Google), file `app.asar.backup` langsung diperbarui dengan versi baru tersebut (`fs.copyFileSync(asarPath, backupPath)`).
+3. **Background Auto-Healing via `SessionStart` Hook:**
+   - File `scripts/session-start-hook.mjs` memicu `node scripts/cdp-injector.mjs self-heal --silent` pada proses latar belakang terpisah (detached, unref), sehingga pemulihan pasca-update berjalan secara transparan saat sesi percakapan pertama dimulai.
+4. **Global Reusable Skill (`agy-dsh-heal`):**
+   - Menyediakan skill global di `~/.gemini/config/skills/agy-dsh-heal/SKILL.md` dan salinan lokal di `skills/agy-dsh-heal/SKILL.md` dengan protokol diagnosa 3 tingkat dan ringkasan guardrail `FAIL-001` hingga `FAIL-009`.

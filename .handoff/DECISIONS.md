@@ -131,6 +131,15 @@
   4. **Zombie Process Elimination:** Remove mcpServers daemon from plugin.json, trim hooks.json to only SessionStart and Stop, and attach unreferenced watchdog timers (setTimeout(() => process.exit(0), 2500).unref()) to Node.js CLI/hook scripts.
 - **Rationale:** Reduces idle CPU/GPU consumption to ~0%, eliminates main-thread layout thrashing, and guarantees zero orphan processes in the Windows task list.
 
+### [ADR-019] Post-Update Self-Healing, Hardened ASAR Backup Synchronization, and Global agy-dsh-heal Skill
+- **Context:** When Google Antigravity updates in the background, `resources/app.asar` is overwritten by stock binaries, wiping the native Main Process loader hook and returning the UI to default blue. Furthermore, existing `app.asar.backup` from an older version risked causing a version downgrade/mismatch if uninstalled on an updated version.
+- **Decision:**
+  1. **Hardened Backup Synchronization:** In `cmdInstallNative()`, verify whether active `app.asar` contains the `AGY-DSH` marker. If unpatched (pristine official update from Google), refresh `app.asar.backup` with this new version (`fs.copyFileSync(asarPath, backupPath)`) before repacking.
+  2. **Unified Single-Door Command (`self-heal`):** Implement `node scripts/cdp-injector.mjs self-heal` combining live CDP injection, DOM verification, and native Main Process patch detection/re-installation.
+  3. **Non-Blocking Background Auto-Heal:** Upgrade `scripts/session-start-hook.mjs` to spawn `self-heal --silent` in an unreferenced detached process, repairing native patches seamlessly on session start.
+  4. **Global Reusable Skill (`agy-dsh-heal`):** Author comprehensive diagnostic and recovery skill in `~/.gemini/config/skills/agy-dsh-heal/SKILL.md` and repository mirror `skills/agy-dsh-heal/SKILL.md` with 3-tier recovery protocols and failure trap summaries.
+- **Rationale:** Guarantees zero version downgrade risks during rollback, eliminates repetitive manual recovery steps after official updates, and equips agents across workspaces with an authoritative repair protocol.
+
 <!-- [ADR_INSERTION_ANCHOR]: Insert all new [ADR-XXX] entries strictly ABOVE this line! -->
 ---
 

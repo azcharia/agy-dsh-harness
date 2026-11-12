@@ -21,7 +21,9 @@ async function main() {
   }
 
   try {
-    const child = spawn(process.execPath, [cliPath, 'apply', '--silent'], {
+    // Run self-heal in silent mode in background so live window is refreshed
+    // and missing native patches (e.g. after official Antigravity update) are repaired
+    const child = spawn(process.execPath, [cliPath, 'self-heal', '--silent'], {
       cwd: path.resolve(__dirname, '..'),
       detached: true,
       stdio: 'ignore',

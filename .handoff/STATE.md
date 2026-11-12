@@ -2,7 +2,7 @@
 
 - **Session ID:** 20261109_231500
 - **Last Updated:** 2026-11-10T23:15:00+07:00
-- **Active Task:** Decouple Heuristic Compaction Tracker, Prune False Events, & Workspace Cleanup (Phase 3.9b - Complete)
+- **Active Task:** Post-Update Self-Healing, Hardened ASAR Backup Synchronization, & Global agy-dsh-heal Skill (Phase 3.11 - Complete)
 - **Status:** MILESTONE_COMPLETE
 
 ## High-Level Goal
@@ -41,6 +41,7 @@ Build a high-performance, zero-bloat custom theme, real-time context/token HUD h
   - [x] Task 3.9: Single-Layer Multi-Color Pastel Doodle, Glass-Border Removal, 250k Compaction Ceiling, & Compaction Tracker (100% PASS - Ref: [ADR-016])
   - [x] Task 3.9b: Decouple Heuristic Compaction Tracker, Prune False Events, & Workspace Cleanup (100% PASS - Ref: [ADR-017, FAIL-008])
   - [x] Task 3.10: Zero-Idle Compute & Zombie Process Elimination (100% PASS - Ref: [ADR-018, FAIL-009])
+  - [x] Task 3.11: Post-Update Self-Healing, Hardened ASAR Backup Synchronization, & Global agy-dsh-heal Skill (100% PASS - Ref: [ADR-019])
 
 ## Working Context
 All roadmap milestones across Phase 1 through Phase 3.10 are complete. The Home screen features seamless integration with glass-borders and box-shadows removed, the native Antigravity "A" logo preserved, and a single-layer 26-icon cosmic doodle rendered exclusively on .agy-home::before with 6 Catppuccin Mocha pastel colors. The context HUD operates cleanly on Antigravity's empirical 250k auto-compaction ceiling (EFFECTIVE_COMPACT_LIMIT = 250000) with dynamic three-tier color coding and proactive alerts. In Phase 3.10, idle performance was perfected: infinite MutationObserver self-triggering loops were eliminated via strict DOM equality guards and internal mutation filtering; tick() execution was throttled to 500ms cooldown with state fingerprinting (reducing idle tick rate to <=1 per 3s and 0% CPU/GPU); mcpServers was purged from plugin.json; hooks.json was trimmed to SessionStart and Stop; and hard-kill watchdog timers were installed across all Node CLI/hook scripts, eliminating all zombie node processes.

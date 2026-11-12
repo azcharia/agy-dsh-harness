@@ -489,10 +489,12 @@ async function cmdStatus() {
   const results = await executeAcrossAntigravityPages(expr, false);
   const resDir = appResourcesDir();
   const asarBackup = path.join(resDir, 'app.asar.backup');
-  const isNativeInstalled = fs.existsSync(asarBackup);
+  const hasBackup = fs.existsSync(asarBackup);
+  const isNativeInstalled = isAsarPatched();
 
   console.log(`\n=== AGY-DSH Harness Active Status (${results.length} window(s)) ===`);
-  console.log(`Native Main Process Patch: ${isNativeInstalled ? 'INSTALLED (Main Process WebContents Hook in app.asar, Cold-Start Persistence)' : 'NOT INSTALLED (CDP / Hook Driven)'}`);
+  console.log(`Native Main Process Patch: ${isNativeInstalled ? 'INSTALLED (in app.asar, Cold-Start Persistence active)' : 'NOT DETECTED (app.asar is stock/unpatched)'}`);
+  console.log(`Safety Backup Status:      ${hasBackup ? 'PRESENT (app.asar.backup exists)' : 'NONE'}`);
   for (const r of results) {
     console.log(`\nWindow: "${r.title}"`);
     console.log(`  - Theme Applied:       ${r.value?.themeApplied ? 'YES' : 'NO'}`);
@@ -544,7 +546,19 @@ async function cmdPushEvents() {
 // Native Main Process Installation (Zero Background Process Mode via ASAR Repacking)
 const NATIVE_PATCH_MARKER = '// AGY-DSH Native Main Process Loader (Zero Background Process)';
 
-async function cmdInstallNative() {
+function isAsarPatched() {
+  const resDir = appResourcesDir();
+  const asarPath = path.join(resDir, 'app.asar');
+  if (!fs.existsSync(asarPath)) return false;
+  try {
+    const buf = fs.readFileSync(asarPath);
+    return buf.includes(Buffer.from(NATIVE_PATCH_MARKER));
+  } catch {
+    return false;
+  }
+}
+
+async function cmdInstallNative({ silent = false } = {}) {
   const resDir = appResourcesDir();
   const asarPath = path.join(resDir, 'app.asar');
   const backupPath = path.join(resDir, 'app.asar.backup');
@@ -555,10 +569,19 @@ async function cmdInstallNative() {
     throw new Error(`Could not find Antigravity resources at ${resDir}. Is Antigravity installed?`);
   }
 
-  // 1. Create safety backup of stock app.asar if not already present
-  if (!fs.existsSync(backupPath)) {
-    console.log(`[AGY-DSH] Creating safety backup of stock app.asar -> app.asar.backup...`);
+  // 1. Safety backup of stock app.asar:
+  // If app.asar is currently stock/unpatched (e.g. freshly installed or updated by Google Antigravity),
+  // ALWAYS refresh app.asar.backup with this pristine version so rollback never causes version mismatch.
+  const alreadyPatched = isAsarPatched();
+  if (!alreadyPatched) {
+    if (!silent) {
+      console.log(`[AGY-DSH] Detected pristine updated app.asar from official update. Refreshed app.asar.backup with current version.`);
+    }
     fs.copyFileSync(asarPath, backupPath);
+  } else if (!fs.existsSync(backupPath)) {
+    if (!silent) {
+      console.warn(`[AGY-DSH] Warning: app.asar is already patched and app.asar.backup is missing. Will not overwrite backup with patched file.`);
+    }
   }
 
   // 2. Clean temporary extraction workspace
@@ -567,8 +590,10 @@ async function cmdInstallNative() {
   }
 
   // 3. Extract source asar (always extract asarPath directly so @electron/asar finds app.asar.unpacked)
-  console.log(`[AGY-DSH] Extracting ${path.basename(asarPath)} into temporary workspace...`);
-  execSync(`npx -y @electron/asar extract "${asarPath}" "${tmpExtractDir}"`, { stdio: 'inherit' });
+  if (!silent) {
+    console.log(`[AGY-DSH] Extracting ${path.basename(asarPath)} into temporary workspace...`);
+  }
+  execSync(`npx -y @electron/asar extract "${asarPath}" "${tmpExtractDir}"`, { stdio: silent ? 'pipe' : 'inherit' });
 
   // 4. Prepare bundled fallback
   const cssText = fs.existsSync(DIST_CSS) ? fs.readFileSync(DIST_CSS, 'utf8') : '';
@@ -640,7 +665,7 @@ async function cmdInstallNative() {
     uContent = uContent.replace(/getThemeMode\(\)\.toUpperCase\(\)\.includes\('LIGHT'\) \? '#FAFAFA' : '#131313'/g, "getThemeMode().toUpperCase().includes('LIGHT') ? '#FAFAFA' : '#111113'");
     uContent = uContent.replace(/#001B4C/gi, '#111113');
     fs.writeFileSync(utilsPath, uContent, 'utf8');
-    console.log('[AGY-DSH] Patched dist/utils.js for zero-flash cold boot.');
+    if (!silent) console.log('[AGY-DSH] Patched dist/utils.js for zero-flash cold boot.');
   }
 
   // 6.2 Update persistent app_storage.json surface color
@@ -650,15 +675,15 @@ async function cmdInstallNative() {
       const storageData = JSON.parse(fs.readFileSync(appStoragePath, 'utf8'));
       storageData.hubSurfaceBackgroundColor = '#111113';
       fs.writeFileSync(appStoragePath, JSON.stringify(storageData, null, 2), 'utf8');
-      console.log('[AGY-DSH] Updated app_storage.json: hubSurfaceBackgroundColor = #111113');
+      if (!silent) console.log('[AGY-DSH] Updated app_storage.json: hubSurfaceBackgroundColor = #111113');
     } catch (e) {
-      console.warn('[AGY-DSH] Warning: Could not update app_storage.json:', e.message);
+      if (!silent) console.warn('[AGY-DSH] Warning: Could not update app_storage.json:', e.message);
     }
   }
 
   // 7. Repack into app.asar
-  console.log(`[AGY-DSH] Repacking patched main process directly into ${asarPath}...`);
-  execSync(`npx -y @electron/asar pack "${tmpExtractDir}" "${asarPath}" --unpack-dir "node_modules/chrome-devtools-mcp"`, { stdio: 'inherit' });
+  if (!silent) console.log(`[AGY-DSH] Repacking patched main process directly into ${asarPath}...`);
+  execSync(`npx -y @electron/asar pack "${tmpExtractDir}" "${asarPath}" --unpack-dir "node_modules/chrome-devtools-mcp"`, { stdio: silent ? 'pipe' : 'inherit' });
 
   // 8. Cleanup temporary extraction directory and legacy unpacked app directory
   fs.rmSync(tmpExtractDir, { recursive: true, force: true });
@@ -666,8 +691,59 @@ async function cmdInstallNative() {
     fs.rmSync(unpackedAppDir, { recursive: true, force: true });
   }
 
-  console.log(`[AGY-DSH] Successfully repacked native Main Process loader into app.asar.`);
-  console.log('Zero background process, zero daemons: theme and HUD auto-load instantly upon cold start.');
+  if (!silent) {
+    console.log(`[AGY-DSH] Successfully repacked native Main Process loader into app.asar.`);
+    console.log('Zero background process, zero daemons: theme and HUD auto-load instantly upon cold start.');
+  }
+}
+
+async function cmdSelfHeal({ silent = false } = {}) {
+  if (!silent) {
+    console.log('\n=== [AGY-DSH] Initiating Single-Door Self-Healing Sequence ===');
+  }
+
+  // 1. Live DOM theme and HUD injection across active windows
+  let liveResult = null;
+  try {
+    const portInfo = readDevToolsActivePort();
+    if (portInfo) {
+      if (!silent) console.log(`[AGY-DSH] Step 1/3: Connected to active Antigravity window via CDP port ${portInfo.port}...`);
+      await cmdApply({ silent });
+      await cmdPushEvents();
+      const statusResults = await cmdStatus();
+      liveResult = statusResults[0]?.value;
+    } else {
+      if (!silent) console.log('[AGY-DSH] Step 1/3: No active DevToolsActivePort found (Antigravity may be closed or cold).');
+    }
+  } catch (err) {
+    if (!silent) console.warn(`[AGY-DSH] Step 1/3 Warning: Live injection skipped or partial: ${err.message}`);
+  }
+
+  // 2. Check native Main Process patch in app.asar
+  if (!silent) console.log('[AGY-DSH] Step 2/3: Verifying native Main Process persistence in app.asar...');
+  const patched = isAsarPatched();
+  if (!patched) {
+    if (!silent) {
+      console.log('[AGY-DSH] Native patch missing or overwritten by official Antigravity update.');
+      console.log('[AGY-DSH] Running hardened cmdInstallNative() with automatic backup synchronization...');
+    }
+    await cmdInstallNative({ silent });
+    if (!silent) console.log('[AGY-DSH] Native patch successfully repaired. Cold-start persistence secured.');
+  } else {
+    if (!silent) console.log('[AGY-DSH] Native patch is active and healthy in app.asar.');
+  }
+
+  // 3. Final summary
+  if (!silent) {
+    console.log('[AGY-DSH] Step 3/3: Self-healing integrity verification:');
+    console.log(`  - Native app.asar Patch:   ${isAsarPatched() ? 'VERIFIED' : 'FAILED'}`);
+    if (liveResult) {
+      console.log(`  - Live Theme Applied:      ${liveResult.themeApplied ? 'YES' : 'NO'}`);
+      console.log(`  - Mini Context Pill:       ${liveResult.miniPillActive ? 'ACTIVE' : 'NOT FOUND'}`);
+      console.log(`  - Audit Drawer Mounted:    ${liveResult.eventsDrawerActive ? 'MOUNTED' : 'NOT FOUND'}`);
+    }
+    console.log('=== [AGY-DSH] Self-Healing Complete: All Systems Operational ===\n');
+  }
 }
 
 async function cmdSetTheme(preset, opacity) {
@@ -741,9 +817,12 @@ async function main() {
       }
       await cmdSetTheme(preset, opacity);
       process.exit(0);
+    } else if (command === 'self-heal') {
+      await cmdSelfHeal({ silent });
+      process.exit(0);
     } else {
       console.error(`Unknown command: ${command}`);
-      console.log('Usage: node scripts/cdp-injector.mjs [apply|status|push-events|set-theme|panic-remove|install-native|uninstall-native]');
+      console.log('Usage: node scripts/cdp-injector.mjs [apply|status|self-heal|push-events|set-theme|panic-remove|install-native|uninstall-native]');
       process.exit(1);
     }
   } catch (err) {
@@ -755,10 +834,10 @@ async function main() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const isHeavy = process.argv.includes('install-native') || process.argv.includes('uninstall-native');
+  const isHeavy = process.argv.includes('install-native') || process.argv.includes('uninstall-native') || process.argv.includes('self-heal');
   const watchdog = setTimeout(() => {
     process.exit(0);
-  }, isHeavy ? 25000 : 4000);
+  }, isHeavy ? 30000 : 4000);
   watchdog.unref();
 
   main();
@@ -768,6 +847,7 @@ export {
   executeAcrossAntigravityPages,
   cmdApply,
   cmdStatus,
+  cmdSelfHeal,
   cmdPushEvents,
   cmdPanicRemove,
   cmdInstallNative,

@@ -129,16 +129,22 @@ Your agent will inspect the environment, repack the native ASAR loader, and repo
 
 ## Self-Healing & App Update Protocol
 
-When Google releases an official application update for Antigravity, the installer will overwrite `resources/app.asar`.
+When Google releases an official application update for Antigravity, the installer will overwrite `resources/app.asar` with fresh stock binaries.
 
-To restore AGY-DSH Harness after an update:
-1. Open terminal in `agy-dsh-harness` directory.
-2. Run:
-   ```bash
-   node scripts/cdp-injector.mjs install-native
-   node scripts/cdp-injector.mjs apply
-   ```
-Your custom matte theme, cosmic doodle, and HUD overlay are restored in under 5 seconds.
+To restore AGY-DSH Harness after an update with a single door:
+```bash
+node scripts/cdp-injector.mjs self-heal
+```
+
+### What `self-heal` Does:
+1. **Live CDP Injection**: Immediately injects theme styling and HUD elements into open windows.
+2. **Hardened Backup Synchronization**: Detects stock updated `app.asar` and automatically refreshes `app.asar.backup` with the new version before repacking, completely preventing version mismatch or downgrade traps during rollbacks.
+3. **Native Repack**: Patches `dist/main.js`, `dist/utils.js`, and `app_storage.json` to restore cold-start persistence and zero-flash startup.
+
+### Global Reusable Skill (`agy-dsh-heal`):
+This repository ships with a dedicated diagnostic and healing skill. Any Antigravity agent can trigger or execute this workflow globally:
+- Global path: `~/.gemini/config/skills/agy-dsh-heal/SKILL.md`
+- In-repo mirror: `skills/agy-dsh-heal/SKILL.md`
 
 ---
 
@@ -156,6 +162,7 @@ AGY-DSH Harness is engineered to adhere to strict resource efficiency standards:
 
 | Command | Purpose |
 |---|---|
+| `node scripts/cdp-injector.mjs self-heal` | Single-door recovery: live injection, backup sync, and native repack |
 | `node scripts/cdp-injector.mjs apply` | Inject theme and HUD into all running Antigravity windows |
 | `node scripts/cdp-injector.mjs status` | Inspect injection status, DOM markers, and active windows |
 | `node scripts/cdp-injector.mjs install-native` | Install permanent zero-daemon cold-boot loader in `app.asar` |
